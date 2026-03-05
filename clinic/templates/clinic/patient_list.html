@@ -1,0 +1,38 @@
+{% extends 'clinic/base.html' %}
+{% block title %}Patients{% endblock %}
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+  <h2 class="text-3xl font-bold text-gray-800">Patients</h2>
+  <a href="{% url 'patient_create' %}" class="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 font-semibold transition">+ Add Patient</a>
+</div>
+
+<div class="bg-white rounded-2xl shadow overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50">
+      <tr class="text-left text-gray-500 border-b">
+        <th class="px-6 py-4">Name</th>
+        <th class="px-6 py-4">Email</th>
+        <th class="px-6 py-4">Phone</th>
+        <th class="px-6 py-4">Blood Type</th>
+        <th class="px-6 py-4">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for patient in patients %}
+      <tr class="border-b last:border-0 hover:bg-gray-50">
+        <td class="px-6 py-4 font-medium">{{ patient.first_name }} {{ patient.last_name }}</td>
+        <td class="px-6 py-4">{{ patient.email }}</td>
+        <td class="px-6 py-4">{{ patient.phone }}</td>
+        <td class="px-6 py-4">{{ patient.blood_type|default:"-" }}</td>
+        <td class="px-6 py-4 flex gap-2">
+          <a href="{% url 'patient_update' patient.pk %}" class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition">Edit</a>
+          <a href="{% url 'patient_delete' patient.pk %}" class="px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="px-6 py-8 text-center text-gray-400">No patients found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
