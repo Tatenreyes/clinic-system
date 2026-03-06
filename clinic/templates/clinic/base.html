@@ -6,24 +6,99 @@
   <title>ClinicMS — {% block title %}Dashboard{% endblock %}</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    @keyframes floatCross {
-      0%   { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
-      50%  { transform: translateY(-20px) rotate(10deg); opacity: 0.3; }
-      100% { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
+    
+    
+    
+    
+    /* Hide default cursor */
+    * {
+      cursor: none !important;
     }
 
+    /* Angel cursor */
+    #angel-cursor {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99999;
+      font-size: 1.8rem;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+      animation: angelFloat 2s ease-in-out infinite;
+    }
+
+    @keyframes angelFloat {
+      0%,100% { transform: translate(-50%, -50%) rotate(-5deg); }
+      50%      { transform: translate(-50%, -55%) rotate(5deg); }
+    }
+
+    /* Angel trail */
+    .angel-trail {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99998;
+      font-size: 0.9rem;
+      opacity: 0.6;
+      animation: trailFade 0.8s ease forwards;
+    }
+
+    @keyframes trailFade {
+      0%   { opacity: 0.6; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.3) translateY(-20px); }
+    }
+
+    /* Sparkle trail */
+    .sparkle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99997;
+      font-size: 0.7rem;
+      animation: sparkleFade 0.6s ease forwards;
+    }
+
+    @keyframes sparkleFade {
+      0%   { opacity: 1; transform: scale(1) translateY(0); }
+      100% { opacity: 0; transform: scale(0) translateY(-15px); }
+    }
+    
+    
+    
+    
+    
     @keyframes bgShift {
       0%   { background-position: 0% 50%; }
       50%  { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes heartbeat {
+      0%   { transform: scale(1); }
+      14%  { transform: scale(1.15); }
+      28%  { transform: scale(1); }
+      42%  { transform: scale(1.1); }
+      70%  { transform: scale(1); }
+    }
+    @keyframes floatCross {
+      0%   { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
+      50%  { transform: translateY(-20px) rotate(10deg); opacity: 0.3; }
+      100% { transform: translateY(0px) rotate(0deg); opacity: 0.15; }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: linear-gradient(-45deg, #e8f0fe, #f0f4ff, #e0ecff, #dbeafe);
       background-size: 400% 400%;
       animation: bgShift 10s ease infinite;
-      margin: 0;
       font-family: sans-serif;
+      min-height: 100vh;
     }
 
     .cross-container {
@@ -37,11 +112,10 @@
 
     .cross {
       position: absolute;
-      color: #93c5fd;
+      color: #86efac;
       animation: floatCross ease-in-out infinite;
       opacity: 0.2;
     }
-
     .cross:nth-child(1)  { left: 5%;  top: 10%; animation-duration: 6s;   font-size: 1.5rem; }
     .cross:nth-child(2)  { left: 15%; top: 70%; animation-duration: 8s;   font-size: 2.5rem; animation-delay: 1s; }
     .cross:nth-child(3)  { left: 25%; top: 30%; animation-duration: 7s;   font-size: 1.2rem; animation-delay: 2s; }
@@ -53,17 +127,24 @@
     .cross:nth-child(9)  { left: 90%; top: 20%; animation-duration: 9s;   font-size: 1rem;   animation-delay: 0.8s; }
     .cross:nth-child(10) { left: 50%; top: 50%; animation-duration: 7s;   font-size: 3rem;   animation-delay: 1.2s; }
 
-    .layout { display: flex; min-height: 100vh; }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
 
     .sidebar {
       width: 256px;
+      min-width: 256px;
       background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
       color: white;
       display: flex;
       flex-direction: column;
       position: fixed;
-      height: 100%;
-      z-index: 10;
+      top: 0; left: 0;
+      height: 100vh;
+      z-index: 100;
       box-shadow: 4px 0 20px rgba(0,0,0,0.15);
     }
 
@@ -80,10 +161,17 @@
       background: white;
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
+      animation: heartbeat 1.8s ease infinite;
     }
 
-    .sidebar nav { padding: 16px; flex: 1; }
+    .sidebar nav {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
     .sidebar-link {
       display: flex;
@@ -95,12 +183,12 @@
       font-size: 0.95rem;
       color: white;
       text-decoration: none;
-      margin-bottom: 4px;
     }
 
     .sidebar-link:hover {
       background-color: rgba(255,255,255,0.15);
       transform: translateX(4px);
+      box-shadow: 0 0 12px rgba(134, 239, 172, 0.5);
     }
 
     .sidebar-footer {
@@ -109,12 +197,21 @@
     }
 
     .main-content {
-      flex: 1;
       margin-left: 256px;
+      flex: 1;
       padding: 32px;
+      animation: fadeIn 0.6s ease forwards;
       position: relative;
       z-index: 1;
     }
+
+    .card-animate {
+      animation: slideUp 0.5s ease forwards;
+      opacity: 0;
+    }
+    .card-animate:nth-child(1) { animation-delay: 0.1s; }
+    .card-animate:nth-child(2) { animation-delay: 0.2s; }
+    .card-animate:nth-child(3) { animation-delay: 0.3s; }
 
     .alert-success {
       margin-bottom: 16px;
@@ -142,14 +239,93 @@
     <span class="cross">✚</span>
   </div>
 
+  <!-- Immune vs Virus Canvas -->
+   <!-- Pixel Wings Cursor -->
+ <!-- Pixel Wings Cursor -->
+  <div id="angel-cursor">
+    <svg width="64" height="50" viewBox="0 0 64 50" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+      <!-- LEFT WING -->
+      <rect x="24" y="0"  width="4" height="4" fill="white"/>
+      <rect x="20" y="4"  width="4" height="4" fill="white"/>
+      <rect x="24" y="4"  width="4" height="4" fill="white"/>
+      <rect x="16" y="8"  width="4" height="4" fill="white"/>
+      <rect x="20" y="8"  width="4" height="4" fill="white"/>
+      <rect x="24" y="8"  width="4" height="4" fill="white"/>
+      <rect x="8"  y="12" width="4" height="4" fill="white"/>
+      <rect x="12" y="12" width="4" height="4" fill="white"/>
+      <rect x="16" y="12" width="4" height="4" fill="white"/>
+      <rect x="20" y="12" width="4" height="4" fill="white"/>
+      <rect x="24" y="12" width="4" height="4" fill="white"/>
+      <rect x="4"  y="16" width="4" height="4" fill="white"/>
+      <rect x="8"  y="16" width="4" height="4" fill="white"/>
+      <rect x="12" y="16" width="4" height="4" fill="white"/>
+      <rect x="16" y="16" width="4" height="4" fill="white"/>
+      <rect x="20" y="16" width="4" height="4" fill="white"/>
+      <rect x="24" y="16" width="4" height="4" fill="white"/>
+      <rect x="4"  y="20" width="4" height="4" fill="white"/>
+      <rect x="8"  y="20" width="4" height="4" fill="white"/>
+      <rect x="12" y="20" width="4" height="4" fill="white"/>
+      <rect x="16" y="20" width="4" height="4" fill="white"/>
+      <rect x="20" y="20" width="4" height="4" fill="white"/>
+      <rect x="8"  y="24" width="4" height="4" fill="white"/>
+      <rect x="12" y="24" width="4" height="4" fill="white"/>
+      <rect x="16" y="24" width="4" height="4" fill="white"/>
+      <rect x="12" y="28" width="4" height="4" fill="white"/>
+      <rect x="16" y="28" width="4" height="4" fill="white"/>
+      <rect x="16" y="32" width="4" height="4" fill="white"/>
+
+      <!-- RIGHT WING -->
+      <rect x="36" y="0"  width="4" height="4" fill="white"/>
+      <rect x="36" y="4"  width="4" height="4" fill="white"/>
+      <rect x="40" y="4"  width="4" height="4" fill="white"/>
+      <rect x="36" y="8"  width="4" height="4" fill="white"/>
+      <rect x="40" y="8"  width="4" height="4" fill="white"/>
+      <rect x="44" y="8"  width="4" height="4" fill="white"/>
+      <rect x="36" y="12" width="4" height="4" fill="white"/>
+      <rect x="40" y="12" width="4" height="4" fill="white"/>
+      <rect x="44" y="12" width="4" height="4" fill="white"/>
+      <rect x="48" y="12" width="4" height="4" fill="white"/>
+      <rect x="52" y="12" width="4" height="4" fill="white"/>
+      <rect x="36" y="16" width="4" height="4" fill="white"/>
+      <rect x="40" y="16" width="4" height="4" fill="white"/>
+      <rect x="44" y="16" width="4" height="4" fill="white"/>
+      <rect x="48" y="16" width="4" height="4" fill="white"/>
+      <rect x="52" y="16" width="4" height="4" fill="white"/>
+      <rect x="56" y="16" width="4" height="4" fill="white"/>
+      <rect x="40" y="20" width="4" height="4" fill="white"/>
+      <rect x="44" y="20" width="4" height="4" fill="white"/>
+      <rect x="48" y="20" width="4" height="4" fill="white"/>
+      <rect x="52" y="20" width="4" height="4" fill="white"/>
+      <rect x="56" y="20" width="4" height="4" fill="white"/>
+      <rect x="44" y="24" width="4" height="4" fill="white"/>
+      <rect x="48" y="24" width="4" height="4" fill="white"/>
+      <rect x="52" y="24" width="4" height="4" fill="white"/>
+      <rect x="44" y="28" width="4" height="4" fill="white"/>
+      <rect x="48" y="28" width="4" height="4" fill="white"/>
+      <rect x="44" y="32" width="4" height="4" fill="white"/>
+
+      <!-- POINTER (pixel arrow at center bottom) -->
+      <rect x="30" y="34" width="4" height="4" fill="white"/>
+      <rect x="28" y="38" width="8" height="4" fill="white"/>
+      <rect x="26" y="42" width="12" height="4" fill="white"/>
+      <rect x="28" y="46" width="4" height="4" fill="white"/>
+      <rect x="32" y="46" width="4" height="4" fill="white"/>
+
+      <!-- Pointer outline for visibility -->
+      <rect x="30" y="34" width="4" height="4" fill="none" stroke="#aaccff" stroke-width="0.5"/>
+      <rect x="26" y="42" width="12" height="4" fill="none" stroke="#aaccff" stroke-width="0.5"/>
+    </svg>
+  </div>
+  <canvas id="immuneCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+
   <div class="layout">
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-icon">🏥</div>
+        <div class="sidebar-icon">❤️</div>
         <div>
-          <div style="font-size:1.1rem; font-weight:700;">ClinicMS</div>
-          <div style="font-size:0.75rem; color:#93c5fd;">Management System</div>
+          <div style="font-size:1.1rem;font-weight:700;">ClinicMS</div>
+          <div style="font-size:0.75rem;color:#93c5fd;">Management System</div>
         </div>
       </div>
       <nav>
@@ -159,7 +335,7 @@
         <a href="{% url 'appointment_list' %}" class="sidebar-link">📅 Appointments</a>
       </nav>
       <div class="sidebar-footer">
-        <a href="{% url 'admin:index' %}" class="sidebar-link" style="font-size:0.85rem; color:#bfdbfe;">⚙️ Admin Panel</a>
+        <a href="{% url 'admin:index' %}" class="sidebar-link" style="font-size:0.85rem;color:#bfdbfe;">⚙️ Admin Panel</a>
       </div>
     </aside>
 
@@ -173,6 +349,398 @@
       {% block content %}{% endblock %}
     </main>
   </div>
+<script>
+  // Pixel Wings Cursor
+    const angelCursor = document.getElementById('angel-cursor');
+    let lastSparkleTime = 0;
+    let lastTrailTime = 0;
+    const sparkles = ['✨','💫','🌟','⭐','🤍'];
+
+    document.addEventListener('mousemove', (e) => {
+      angelCursor.style.left = e.clientX + 'px';
+      angelCursor.style.top  = e.clientY + 'px';
+      const now = Date.now();
+
+      if (now - lastSparkleTime > 60) {
+        lastSparkleTime = now;
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('sparkle');
+        sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+        sparkle.style.left = (e.clientX + (Math.random() - 0.5) * 40) + 'px';
+        sparkle.style.top  = (e.clientY + (Math.random() - 0.5) * 20) + 'px';
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 600);
+      }
+
+      if (now - lastTrailTime > 100) {
+        lastTrailTime = now;
+        const trail = document.createElement('div');
+        trail.classList.add('wing-trail');
+        trail.innerHTML = `<svg width="40" height="25" viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <rect x="24" y="0"  width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="16" y="8"  width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="20" y="8"  width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="24" y="8"  width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="4"  y="16" width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="12" y="16" width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="20" y="16" width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="36" y="0"  width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="36" y="8"  width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="44" y="8"  width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="36" y="16" width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="48" y="16" width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+          <rect x="56" y="16" width="4" height="4" fill="rgba(255,255,255,0.4)"/>
+        </svg>`;
+        trail.style.left = e.clientX + 'px';
+        trail.style.top  = e.clientY + 'px';
+        document.body.appendChild(trail);
+        setTimeout(() => trail.remove(), 500);
+      }
+    });
+
+    document.addEventListener('mousedown', () => {
+      angelCursor.style.filter = 'drop-shadow(0 0 20px rgba(255,255,255,1))';
+      angelCursor.style.transform = 'translate(-50%, -50%) scaleX(1.5)';
+    });
+    document.addEventListener('mouseup', () => {
+      angelCursor.style.filter = 'drop-shadow(0 0 8px rgba(180,210,255,1))';
+      angelCursor.style.transform = 'translate(-50%, -50%) scaleX(1)';
+    });
+    const canvas = document.getElementById('immuneCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    const GERM_EMOJIS = ['🦠','🦠','🦠','☣️'];
+    const IMMUNE_EMOJI = '🩸';
+    const EXPLOSION_FRAMES = ['💥','✨','⭐'];
+    const KILL_MESSAGES = ['Eliminated! 🎯','Destroyed! 💪','Killed! ⚡','Annihilated! 🔥','Dead! ☠️'];
+    const BOSS_HIT_MESSAGES = ['Ouch! 😣','Stop it! 😠','That hurts! 😤','Nooo! 😱','Not yet! 💢'];
+
+    let explosions = [];
+    let killMessages = [];
+
+    // Load boss image
+    const bossImg = new Image();
+    bossImg.src = 'https://i.imgur.com/3KArJwq.jpeg';
+
+    class Germ {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = 18 + Math.random() * 14;
+        this.speedX = (Math.random() - 0.5) * 1.5;
+        this.speedY = (Math.random() - 0.5) * 1.5;
+        this.emoji = GERM_EMOJIS[Math.floor(Math.random() * GERM_EMOJIS.length)];
+        this.alive = true;
+        this.opacity = 0.5;
+      }
+      kill() {
+        this.alive = false;
+        explosions.push(new Explosion(this.x, this.y, false));
+        killMessages.push({
+          x: this.x, y: this.y,
+          text: KILL_MESSAGES[Math.floor(Math.random() * KILL_MESSAGES.length)],
+          frame: 0, maxFrames: 120
+        });
+        const self = this;
+        setTimeout(() => { self.reset(); }, 1500);
+      }
+      update() {
+        if (!this.alive) return;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height;
+        if (this.y > canvas.height) this.y = 0;
+      }
+      draw() {
+        if (!this.alive) return;
+        ctx.globalAlpha = this.opacity;
+        ctx.font = `${this.size}px serif`;
+        ctx.fillText(this.emoji, this.x, this.y);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    class BossGerm {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = 70;
+        this.maxHp = 20;
+        this.hp = this.maxHp;
+        this.speedX = (Math.random() - 0.5) * 1.2;
+        this.speedY = (Math.random() - 0.5) * 1.2;
+        this.alive = true;
+        this.flashTimer = 0;
+        this.respawning = false;
+      }
+      hit() {
+        if (!this.alive) return;
+        this.hp--;
+        this.flashTimer = 10;
+        killMessages.push({
+          x: this.x, y: this.y - 40,
+          text: this.hp > 0
+            ? `${BOSS_HIT_MESSAGES[Math.floor(Math.random() * BOSS_HIT_MESSAGES.length)]} HP: ${this.hp}`
+            : '👑 BOSS DEFEATED! 👑',
+          frame: 0, maxFrames: 120,
+          color: this.hp > 0 ? '#f97316' : '#7c3aed',
+          size: this.hp > 0 ? '14px' : '20px'
+        });
+        if (this.hp <= 0) {
+          this.alive = false;
+          // Massive explosion!
+          for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+              explosions.push(new Explosion(
+                this.x + (Math.random() - 0.5) * 60,
+                this.y + (Math.random() - 0.5) * 60,
+                true
+              ));
+            }, i * 200);
+          }
+          this.respawning = true;
+          setTimeout(() => { this.reset(); }, 4000);
+        }
+      }
+      update() {
+        if (!this.alive) return;
+        // Move faster when low hp
+        const speedMult = this.hp < 5 ? 2.5 : this.hp < 10 ? 1.8 : 1;
+        this.x += this.speedX * speedMult;
+        this.y += this.speedY * speedMult;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.y < 0) this.y = canvas.height;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.flashTimer > 0) this.flashTimer--;
+      }
+      draw() {
+        if (!this.alive) return;
+
+        // Flash red when hit
+        if (this.flashTimer > 0) {
+          ctx.globalAlpha = 0.6;
+          ctx.fillStyle = '#ef4444';
+          ctx.beginPath();
+          ctx.arc(this.x + this.size/2, this.y + this.size/2, this.size/1.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        // Crown
+        ctx.font = '28px serif';
+        ctx.globalAlpha = 0.9;
+        ctx.fillText('👑', this.x + this.size/2 - 14, this.y - 8);
+
+        // Boss image in circle
+        ctx.save();
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        ctx.arc(this.x + this.size/2, this.y + this.size/2, this.size/2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        if (bossImg.complete) {
+          ctx.drawImage(bossImg, this.x, this.y, this.size, this.size);
+        }
+        ctx.restore();
+
+        // Border color changes with hp
+        const hpRatio = this.hp / this.maxHp;
+        ctx.globalAlpha = 0.9;
+        ctx.strokeStyle = hpRatio > 0.5 ? '#22c55e' : hpRatio > 0.25 ? '#f97316' : '#ef4444';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(this.x + this.size/2, this.y + this.size/2, this.size/2, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // Health bar
+        const barW = 80;
+        const barX = this.x + this.size/2 - barW/2;
+        const barY = this.y + this.size + 8;
+
+        // Background
+        ctx.globalAlpha = 0.7;
+        ctx.fillStyle = '#fecaca';
+        ctx.beginPath();
+        ctx.roundRect(barX, barY, barW, 10, 5);
+        ctx.fill();
+
+        // HP fill
+        ctx.fillStyle = hpRatio > 0.5 ? '#22c55e' : hpRatio > 0.25 ? '#f97316' : '#ef4444';
+        ctx.beginPath();
+        ctx.roundRect(barX, barY, barW * hpRatio, 10, 5);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        // HP text
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillStyle = '#1e3a8a';
+        ctx.globalAlpha = 0.9;
+        ctx.fillText(`HP: ${this.hp}/${this.maxHp}`, barX + 18, barY + 9);
+        ctx.globalAlpha = 1;
+
+        // BOSS label
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillStyle = '#7c3aed';
+        ctx.globalAlpha = 0.9;
+        ctx.fillText('👾 BOSS', this.x + this.size/2 - 22, this.y - 28);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    class ImmuneCell {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = 16 + Math.random() * 10;
+        this.speed = 1.5 + Math.random() * 1.5;
+        this.target = null;
+        this.hitCooldown = 0;
+      }
+      update(germs, boss) {
+        // Find nearest target including boss
+        let nearest = null;
+        let minDist = Infinity;
+        germs.forEach(g => {
+          if (!g.alive) return;
+          const d = Math.hypot(g.x - this.x, g.y - this.y);
+          if (d < minDist) { minDist = d; nearest = { obj: g, isBoss: false }; }
+        });
+        if (boss.alive) {
+          const d = Math.hypot(boss.x - this.x, boss.y - this.y);
+          if (d < minDist) { minDist = d; nearest = { obj: boss, isBoss: true }; }
+        }
+        this.target = nearest;
+
+        if (this.target) {
+          const dx = this.target.obj.x - this.x;
+          const dy = this.target.obj.y - this.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 25) {
+            if (this.target.isBoss) {
+              if (this.hitCooldown <= 0) {
+                this.target.obj.hit();
+                this.hitCooldown = 60; // hit boss every 60 frames
+              }
+            } else {
+              this.target.obj.kill();
+            }
+          } else {
+            this.x += (dx / dist) * this.speed;
+            this.y += (dy / dist) * this.speed;
+          }
+        }
+        if (this.hitCooldown > 0) this.hitCooldown--;
+      }
+      draw() {
+        ctx.globalAlpha = 0.6;
+        ctx.font = `${this.size}px serif`;
+        ctx.fillText(IMMUNE_EMOJI, this.x, this.y);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    class Explosion {
+      constructor(x, y, isBig = false) {
+        this.x = x; this.y = y;
+        this.frame = 0;
+        this.maxFrames = isBig ? 50 : 25;
+        this.count = isBig ? 16 : 8;
+        this.particles = Array.from({length: this.count}, (_, i) => ({
+          angle: (i / this.count) * Math.PI * 2,
+          speed: (isBig ? 3 : 1.5) + Math.random() * 2,
+          dist: 0,
+          emoji: EXPLOSION_FRAMES[Math.floor(Math.random() * EXPLOSION_FRAMES.length)]
+        }));
+      }
+      update() {
+        this.frame++;
+        this.particles.forEach(p => p.dist += p.speed);
+      }
+      draw() {
+        const progress = this.frame / this.maxFrames;
+        ctx.globalAlpha = (1 - progress) * 0.9;
+        ctx.font = `${20 - progress * 10}px serif`;
+        this.particles.forEach(p => {
+          ctx.fillText(p.emoji, this.x + Math.cos(p.angle) * p.dist, this.y + Math.sin(p.angle) * p.dist);
+        });
+        ctx.globalAlpha = 1;
+      }
+      isDone() { return this.frame >= this.maxFrames; }
+    }
+
+    const germs = Array.from({length: 8}, () => new Germ());
+    const boss = new BossGerm();
+    const immuneCells = Array.from({length: 5}, () => new ImmuneCell());
+
+    // Click to kill/hit
+    canvas.style.pointerEvents = 'auto';
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Check boss click
+      if (boss.alive) {
+        const dist = Math.hypot((boss.x + boss.size/2) - mouseX, (boss.y + boss.size/2) - mouseY);
+        if (dist < boss.size/2) {
+          boss.hit();
+          return;
+        }
+      }
+
+      // Check regular germ click
+      germs.forEach(g => {
+        if (!g.alive) return;
+        const dist = Math.hypot(g.x - mouseX, g.y - mouseY);
+        if (dist < 35) { g.kill(); }
+      });
+    });
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      germs.forEach(g => { g.update(); g.draw(); });
+      boss.update();
+      boss.draw();
+      immuneCells.forEach(c => { c.update(germs, boss); c.draw(); });
+
+      explosions.forEach(e => { e.update(); e.draw(); });
+      explosions = explosions.filter(e => !e.isDone());
+
+      killMessages.forEach(msg => {
+        msg.frame++;
+        msg.y -= 0.3;
+        const opacity = 1 - (msg.frame / msg.maxFrames);
+        ctx.globalAlpha = opacity;
+        ctx.font = `bold ${msg.size || '16px'} sans-serif`;
+        ctx.fillStyle = msg.color || '#ef4444';
+        ctx.fillText(msg.text, msg.x, msg.y);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = 'black';
+      });
+      killMessages = killMessages.filter(m => m.frame < m.maxFrames);
+
+      
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    
+  </script>
 
 </body>
 </html>

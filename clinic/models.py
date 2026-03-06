@@ -48,3 +48,34 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"{self.patient} with {self.doctor} on {self.appointment_date:%Y-%m-%d}"
+
+class ClassifiedFile(models.Model):
+    CLASSIFICATION_CHOICES = [
+        ('top_secret', '🔴 TOP SECRET'),
+        ('classified', '🟠 CLASSIFIED'),
+        ('confidential', '🟡 CONFIDENTIAL'),
+        ('restricted', '🔵 RESTRICTED'),
+    ]
+    STATUS_CHOICES = [
+        ('active', 'ACTIVE'),
+        ('leaked', 'LEAKED'),
+        ('encrypted', 'ENCRYPTED'),
+        ('deleted', 'DELETED - RECOVERED'),
+    ]
+    file_id        = models.CharField(max_length=20, unique=True)
+    title          = models.CharField(max_length=200)
+    subject        = models.CharField(max_length=200)
+    classification = models.CharField(max_length=20, choices=CLASSIFICATION_CHOICES, default='classified')
+    status         = models.CharField(max_length=20, choices=STATUS_CHOICES, default='encrypted')
+    date_created   = models.DateField()
+    agency         = models.CharField(max_length=100)
+    content        = models.TextField()
+    is_redacted    = models.BooleanField(default=True)
+    created_at     = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"[{self.file_id}] {self.title}"
+
+    class Meta:
+        verbose_name = '🗂️ Classified File'
+        verbose_name_plural = '🗂️ Classified Files'

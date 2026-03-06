@@ -1,0 +1,347 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | ClinicMS Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <a href="{% url 'admin:index' %}">🏥 ClinicMS Admin</a>
+</h1>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  @keyframes scanline {
+    0% { top: -10%; }
+    100% { top: 110%; }
+  }
+
+  @keyframes flicker {
+    0%,100% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: 0.4; }
+    94% { opacity: 1; }
+    96% { opacity: 0.6; }
+    97% { opacity: 1; }
+  }
+
+  @keyframes glitch {
+    0%,100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-1px, 1px); }
+    80% { transform: translate(1px, -1px); }
+  }
+
+  @keyfunction matrixFall {
+    0% { transform: translateY(-100%); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  @keyframes matrixFall {
+    0% { transform: translateY(-100%); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  @keyframes virusPulse {
+    0%,100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.3); opacity: 0.6; }
+  }
+
+  @keyframes hackText {
+    0%,100% { content: 'SYSTEM BREACH DETECTED 🔴'; }
+    25% { content: 'VIRUS DETECTED 🦠'; }
+    50% { content: 'FIREWALL ACTIVE 🛡️'; }
+    75% { content: 'SCANNING... ⚠️'; }
+  }
+
+  @keyframes borderGlow {
+    0%,100% { box-shadow: 0 0 5px #00ff41, inset 0 0 5px #00ff41; }
+    50% { box-shadow: 0 0 20px #00ff41, inset 0 0 10px #00ff41; }
+  }
+
+  body {
+    background-color: #0a0a0a !important;
+    animation: flicker 8s infinite;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Matrix canvas behind everything */
+  #matrixCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.15;
+  }
+
+  /* Scanline effect */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -10%;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(0, 255, 65, 0.15);
+    animation: scanline 6s linear infinite;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Floating viruses */
+  .virus-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .virus {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: virusPulse ease-in-out infinite;
+    opacity: 0.3;
+  }
+
+  .virus:nth-child(1)  { left: 5%;  top: 15%; animation-duration: 3s; }
+  .virus:nth-child(2)  { left: 20%; top: 60%; animation-duration: 4s; animation-delay: 1s; }
+  .virus:nth-child(3)  { left: 35%; top: 25%; animation-duration: 3.5s; animation-delay: 0.5s; }
+  .virus:nth-child(4)  { left: 50%; top: 75%; animation-duration: 5s; animation-delay: 2s; }
+  .virus:nth-child(5)  { left: 65%; top: 40%; animation-duration: 4s; animation-delay: 1.5s; }
+  .virus:nth-child(6)  { left: 80%; top: 20%; animation-duration: 3s; animation-delay: 0.8s; }
+  .virus:nth-child(7)  { left: 90%; top: 65%; animation-duration: 4.5s; animation-delay: 3s; }
+  .virus:nth-child(8)  { left: 10%; top: 85%; animation-duration: 3.8s; animation-delay: 2.5s; }
+
+  /* Hacking status bar */
+  .hack-bar {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 100%;
+    background: rgba(0, 20, 0, 0.9);
+    border-top: 1px solid #00ff41;
+    color: #00ff41;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    padding: 4px 16px;
+    z-index: 9998;
+    display: flex;
+    gap: 20px;
+    animation: borderGlow 2s ease infinite;
+  }
+
+  .hack-bar span {
+    animation: flicker 3s infinite;
+  }
+
+  /* Admin header styling */
+  #header {
+    background: linear-gradient(90deg, #001a00, #003300, #001a00) !important;
+    border-bottom: 2px solid #00ff41 !important;
+    position: relative;
+    z-index: 10;
+    animation: glitch 10s infinite;
+  }
+
+  #header a, #header h1 {
+    color: #00ff41 !important;
+    font-family: 'Courier New', monospace !important;
+    text-shadow: 0 0 10px #00ff41 !important;
+  }
+
+  #branding h1 {
+    font-family: 'Courier New', monospace !important;
+    color: #00ff41 !important;
+    text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41 !important;
+  }
+
+  /* Main content area */
+  #content-main, #content, .module {
+    position: relative;
+    z-index: 5;
+    background: rgba(0, 10, 0, 0.85) !important;
+    border: 1px solid #00ff41 !important;
+    color: #00ff41 !important;
+  }
+
+  /* Nav sidebar */
+  nav#nav-sidebar {
+    background: rgba(0, 15, 0, 0.9) !important;
+    border-right: 1px solid #00ff41 !important;
+  }
+
+  /* Links */
+  a, a:visited {
+    color: #00ff41 !important;
+  }
+
+  a:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px #00ff41 !important;
+  }
+
+  /* Tables */
+  table {
+    border-color: #00ff41 !important;
+  }
+
+  th {
+    background: rgba(0, 50, 0, 0.8) !important;
+    color: #00ff41 !important;
+    border-color: #00ff41 !important;
+  }
+
+  td {
+    border-color: #003300 !important;
+    color: #00cc33 !important;
+  }
+
+  tr:hover td {
+    background: rgba(0, 80, 0, 0.3) !important;
+  }
+
+  /* Buttons */
+  .button, input[type=submit], input[type=button] {
+    background: #003300 !important;
+    border: 1px solid #00ff41 !important;
+    color: #00ff41 !important;
+    font-family: 'Courier New', monospace !important;
+  }
+
+  .button:hover, input[type=submit]:hover {
+    background: #00ff41 !important;
+    color: #000 !important;
+  }
+
+  /* Inputs */
+  input, select, textarea {
+    background: #001a00 !important;
+    border: 1px solid #00ff41 !important;
+    color: #00ff41 !important;
+  }
+
+  /* Breadcrumbs */
+  .breadcrumbs {
+    background: rgba(0,20,0,0.9) !important;
+    border-bottom: 1px solid #00ff41 !important;
+    color: #00ff41 !important;
+  }
+
+  /* Module headers */
+  .module caption, .module h2, h2 {
+    background: rgba(0, 40, 0, 0.9) !important;
+    color: #00ff41 !important;
+    border-bottom: 1px solid #00ff41 !important;
+  }
+
+  /* Login */
+  #login-form {
+    background: rgba(0,10,0,0.9) !important;
+    border: 1px solid #00ff41 !important;
+    box-shadow: 0 0 30px #00ff41 !important;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: #00ff41; }
+</style>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block footer %}
+<!-- Floating viruses -->
+<div class="virus-container">
+  <span class="virus">🦠</span>
+  <span class="virus">☣️</span>
+  <span class="virus">🦠</span>
+  <span class="virus">💀</span>
+  <span class="virus">🦠</span>
+  <span class="virus">☣️</span>
+  <span class="virus">🦠</span>
+  <span class="virus">💀</span>
+</div>
+
+<!-- Matrix canvas -->
+<canvas id="matrixCanvas"></canvas>
+
+<!-- Hacking status bar -->
+<div class="hack-bar">
+  <span>⬛ SYSTEM: ONLINE</span>
+  <span id="hackStatus">🔴 THREAT DETECTED</span>
+  <span id="virusCount">🦠 VIRUSES: 0</span>
+  <span id="hackTime"></span>
+  <span>🛡️ FIREWALL: ACTIVE</span>
+</div>
+
+<script>
+  // Matrix rain effect
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()ウアイオエカキクケコ🦠☣️';
+  const fontSize = 14;
+  const columns = canvas.width / fontSize;
+  const drops = Array(Math.floor(columns)).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ff41';
+    ctx.font = fontSize + 'px monospace';
+    drops.forEach((y, i) => {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(char, i * fontSize, y * fontSize);
+      if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    });
+  }
+
+  setInterval(drawMatrix, 50);
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+
+  // Hacking status cycling
+  const statuses = [
+    '🔴 THREAT DETECTED',
+    '🦠 VIRUS SCANNING...',
+    '⚠️ BREACH ATTEMPT',
+    '🛡️ BLOCKING ATTACK',
+    '✅ THREAT NEUTRALIZED',
+    '🔍 MONITORING...',
+    '☣️ MALWARE FOUND',
+    '💀 ELIMINATING...',
+  ];
+
+  let statusIndex = 0;
+  let virusCount = Math.floor(Math.random() * 50) + 10;
+
+  setInterval(() => {
+    statusIndex = (statusIndex + 1) % statuses.length;
+    document.getElementById('hackStatus').textContent = statuses[statusIndex];
+    virusCount = Math.max(0, virusCount + Math.floor(Math.random() * 6) - 3);
+    document.getElementById('virusCount').textContent = `🦠 VIRUSES: ${virusCount}`;
+  }, 2000);
+
+  // Live clock
+  function updateTime() {
+    const now = new Date();
+    document.getElementById('hackTime').textContent =
+      `🕐 ${now.toLocaleTimeString()} | ACCESS LEVEL: ADMIN`;
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+</script>
+{% endblock %}
