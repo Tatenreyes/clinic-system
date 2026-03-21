@@ -1,3 +1,4 @@
+
 django
 psycopg2-binary
 django-tailwind
@@ -6,3 +7,5 @@ gunicorn
 dj-database-url
 python-dotenv
 pillow
+djangorestframework
+django-cors-headers
